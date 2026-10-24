@@ -1,0 +1,11 @@
+.git
+.github
+target
+.vscode
+.env
+.env.*
+*.sql
+*.pem
+*.key
+src/main/resources/application.properties
+src/main/resources/application.yml
