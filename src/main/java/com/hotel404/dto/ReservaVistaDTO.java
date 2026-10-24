@@ -1,7 +1,7 @@
 package com.hotel404.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;
 
@@ -13,8 +13,9 @@ public class ReservaVistaDTO {
     private String nombre;
     private String dpi;
     private String telefono;
-    private Date fechaIngreso;
-    private Date fechaSalida;
+    // Son días de estancia, sin hora ni conversión de zona horaria.
+    private LocalDate fechaIngreso;
+    private LocalDate fechaSalida;
     private BigDecimal total;
     private String estadoReservacion;
     private List<String> habitaciones;

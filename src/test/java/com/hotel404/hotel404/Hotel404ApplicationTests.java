@@ -42,6 +42,34 @@ class Hotel404ApplicationTests {
     @Autowired
     HuespedesRepository huespedes;
 
+    @Autowired
+    com.hotel404.service.ConsultaHotelService consultas;
+
+    @Autowired
+    tools.jackson.databind.ObjectMapper json;
+
+    @Autowired
+    jakarta.persistence.EntityManager entidades;
+
+    // La API debe devolver los mismos días aunque el servidor utilice UTC.
+    @Test
+    void conservaFechasAlConsultarReserva() throws Exception {
+        var dto = solicitud(1, 2);
+        var entrada = LocalDate.of(LocalDate.now().getYear() + 1, 11, 1);
+        dto.setEntrada(entrada);
+        dto.setSalida(entrada.plusDays(1));
+        var resultado = hotel.reservar(dto, null);
+        entidades.flush();
+        entidades.clear();
+
+        var reserva = consultas.listar().stream()
+            .filter(r -> r.getIdReservacion().equals(resultado.get("idReservacion")))
+            .findFirst().orElseThrow();
+        var respuesta = json.readTree(json.writeValueAsString(reserva));
+        assertEquals(entrada.toString(), respuesta.get("fechaIngreso").asText());
+        assertEquals(entrada.plusDays(1).toString(), respuesta.get("fechaSalida").asText());
+    }
+
     // Prepara una solicitud válida sin depender de la fecha en que se ejecuta la prueba.
     private SolicitudReservaDTO solicitud(int entrada, int salida) {
         SolicitudReservaDTO dto = new SolicitudReservaDTO();
